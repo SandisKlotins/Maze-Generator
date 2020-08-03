@@ -1,2 +1,2 @@
 # Maze-Generator
-Script for generating randomized mazes using Pygame.
+Single file script for generating randomized mazes using Pygame.
