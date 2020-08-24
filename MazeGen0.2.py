@@ -1,5 +1,4 @@
 # Recursive stack based maze generator
-from collections import Counter
 import pygame
 from math import ceil
 import random
@@ -9,9 +8,9 @@ import time
 # --------- Pygame settup --------------
 
 # Board properties
-size = (600, 600)
-rows = ceil(size[0] / 25)
-columns = ceil(size[1] / 25)
+size = (900, 900)
+rows = ceil(size[0] / 25)-1
+columns = ceil(size[1] / 25)-1
 
 screen = pygame.display.set_mode(size)
 
@@ -35,9 +34,6 @@ clock = pygame.time.Clock()
 
 #------------ Maze logic ---------------
 
-# 2d array for creating the solution, not used during maze construction
-grid = [[(0,0) for row in range(rows)] for column in range(columns)]
-
 stack = []
 visited = []
 solution = []
@@ -50,13 +46,13 @@ def getNeighbours(cell):
     right =  (cell[0] + 1, cell[1])
 
     result = []
-    if top[0] > -1 and top[1] > -1 and top[0] < rows and top[1] < columns:
+    if top[0] > 0 and top[1] > 0 and top[0] < rows and top[1] < columns:
         result.append(top)
-    if left[0] > -1 and left[1] > -1 and left[0] < rows and left[1] < columns:
+    if left[0] > 0 and left[1] > 0 and left[0] < rows and left[1] < columns:
         result.append(left) 
-    if bottom[0] > -1 and bottom[1] > -1 and bottom[0] < rows and bottom[1] < columns:
+    if bottom[0] > 0 and bottom[1] > 0 and bottom[0] < rows and bottom[1] < columns:
         result.append(bottom)
-    if right[0] > -1 and right[1] > -1 and right[0] < rows and right[1] < columns:
+    if right[0] > 0 and right[1] > 0 and right[0] < rows and right[1] < columns:
         result.append(right)
     return result
 
@@ -104,10 +100,6 @@ def drawBlock(node_lst, next_cell, color):
 
     pygame.display.update(rect)
 
-def createSolution(visited):
-    remove_duplicates = list(dict.fromkeys(visited))
-    return remove_duplicates
-
 def plotGrid(cell):
     neighbors = getNeighbours(cell)
     valid_neighbors = checkVisited(neighbors)
@@ -123,8 +115,8 @@ def plotGrid(cell):
     return next_cell
 
 # Start
-start = (0, 0)
-rect = pygame.draw.rect(screen, WHITE, (start[0], start[1], width, height))
+start = (1, 1)
+rect = pygame.draw.rect(screen, WHITE, (start[0] * margin, start[1] * margin, width, height))
 pygame.display.update(rect)
 visited.append(start)
 stack.append(start)
@@ -136,32 +128,6 @@ while len(stack) != 0:
     next_cell = plotGrid(next_cell)
     time.sleep(0.01)
 
-# rect = pygame.draw.rect(screen, RED, (start[0], start[1], width, height))
-# pygame.display.update(rect)
-# index = 1
-# for cell in createSolution(visited):
-#     if cell == (0, 0):
-#         pass
-#     else:
-#         if cell == (rows-1, columns-1):
-#             drawBlock(visited, cell, GREEN)
-#             break
-#         else:
-#             drawBlock(visited, cell, RED)
-#             time.sleep(0.1)
-        
-
-
-#---------------------------------------
-# Helper function for color toggling <notInUse>
-
-def switchVal(grid):
-    val = {
-            1 : 0,
-            0 : 1,
-            }
-    return val.get(grid)
-#---------------------------------------
 
 # -------- Main Program Loop -----------
 
@@ -170,15 +136,6 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        #elif event.type == pygame.MOUSEBUTTONDOWN:
-            #mouse_pos = pygame.mouse.get_pos()
-            # mouse pos in pixels / margin and rounded up = mouse pos in cols and rows
-            #mouse_x = ceil(mouse_pos[1] / margin)
-            #mouse_y = ceil(mouse_pos[0] / margin)
-            # flips the cell's value (toggles color)
-            #grid[mouse_x-1][mouse_y-1] = switchVal(grid[mouse_x-1][mouse_y-1])
-
-            #print('Row: {}, Col: {}'.format(mouse_x-1, mouse_y-1))
 
     screen.fill(BLACK)
 
